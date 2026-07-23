@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نَتْبَع | تتبع حافلات ذوي الاحتياجات الخاصة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚌</text></svg>">
+    <meta name="theme-color" content="#2563EB">
+    <meta name="description" content="تطبيق تتبع حافلات ذوي الاحتياجات الخاصة - اطلب الحافلة بضغطة واحدة">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 6v6M16 6v6M2 12h20M6 18h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2zM6 18v2M18 18v2"/>
+                </svg>
+                <span class="logo-text">نَتْبَع</span>
+            </div>
+            <div class="header-actions">
+                <button class="sos-btn" id="sosBtn" title="نداء استغاثة">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72"/>
+                    </svg>
+                    <span>SOS</span>
+                </button>
+                <button class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="track">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    <span>التتبع</span>
+                </button>
+                <button class="nav-btn" data-section="schedule">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2"/>
+                        <path d="M16 2v4M8 2v4M3 10h18"/>
+                    </svg>
+                    <span>رحلاتي</span>
+                </button>
+                <button class="nav-btn" data-section="favorites">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>محفوظات</span>
+                </button>
+                <button class="nav-btn" data-section="contact">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <path d="M22 6l-10 7L2 6"/>
+                    </svg>
+                    <span>تواصل</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Map Section -->
+        <section id="track" class="section active">
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2"/>
+                        <path d="M16 2v4M8 2v4M3 10h18"/>
+                    </svg>
+                    <span><strong id="tripCount">0</strong> رحلة قادمة</span>
+                </div>
+                <div class="stat-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span><strong id="savedLocationsCount">0</strong> موقع محفوظ</span>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <div id="map" aria-label="خريطة تتبع الحافلة"></div>
+                <div class="map-controls">
+                    <button class="map-control-btn primary" id="locateBtn" aria-label="موقعي">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                        </svg>
+                    </button>
+                    <button class="map-control-btn" id="zoomIn" aria-label="تكبير">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/>
+                        </svg>
+                    </button>
+                    <button class="map-control-btn" id="zoomOut" aria-label="تصغير">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35M8 11h6"/>
+                        </svg>
+                    </button>
+                    <button class="map-control-btn" id="satelliteBtn" aria-label="قمر صناعي">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="map-loading" id="mapLoading">
+                    <div class="spinner"></div>
+                    <span>جاري تحميل الخريطة...</span>
+                </div>
+            </div>
+
+            <!-- Bus Status Card -->
+            <div class="status-card" id="statusCard">
+                <div class="status-header">
+                    <div class="bus-icon-wrapper">
+                        <svg class="bus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 6v6M16 6v6M2 12h20M6 18h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2zM6 18v2M18 18v2"/>
+                        </svg>
+                    </div>
+                    <div class="status-info">
+                        <h2 class="status-title">حافلة رقم <span id="busNumber">127</span></h2>
+                        <p class="status-subtitle" id="driverName">السائق: أحمد محمد</p>
+                    </div>
+                    <div class="status-badge available" id="statusBadge">
+                        <span class="status-dot"></span>
+                        <span class="status-text" id="statusText">متاحة</span>
+                    </div>
+                </div>
+                <div class="status-details">
+                    <div class="status-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                        </svg>
+                        <span>مقاعد: <strong id="availableSeats">8</strong></span>
+                    </div>
+                    <div class="status-item highlight">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <span>الوصول: <strong id="eta">5</strong> دقيقة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Request Bus Button -->
+            <button class="request-btn" id="requestBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 6v6M16 6v6M2 12h20M6 18h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2zM6 18v2M18 18v2"/>
+                </svg>
+                <span>اطلب الحافلة الآن</span>
+            </button>
+        </section>
+
+        <!-- Schedule Section -->
+        <section id="schedule" class="section">
+            <div class="section-header">
+                <h2>رحلاتي المجدولة</h2>
+                <button class="add-trip-btn" id="addTripBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    إضافة رحلة
+                </button>
+            </div>
+
+            <!-- Stats Summary -->
+            <div class="schedule-stats">
+                <div class="schedule-stat">
+                    <span class="stat-number" id="totalTrips">0</span>
+                    <span class="stat-label">إجمالي الرحلات</span>
+                </div>
+                <div class="schedule-stat">
+                    <span class="stat-number" id="upcomingTrips">0</span>
+                    <span class="stat-label">قادمة</span>
+                </div>
+            </div>
+
+            <div class="trips-list" id="tripsList"></div>
+            <div class="empty-state" id="emptyTrips">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <path d="M16 2v4M8 2v4M3 10h18"/>
+                </svg>
+                <p>لا توجد رحلات مجدولة</p>
+                <span>اضغط على "إضافة رحلة" لجدولة رحلة جديدة</span>
+            </div>
+        </section>
+
+        <!-- Favorites Section -->
+        <section id="favorites" class="section">
+            <div class="section-header">
+                <h2>مواقفي المحفوظة</h2>
+            </div>
+            <p class="section-desc">احفظ مواقعك المفضلة للوصول إليها بسرعة</p>
+            <div id="favoriteLocations"></div>
+            <div class="empty-state" id="emptyFavorites" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <p>لا توجد مواقع محفوظة</p>
+                <span>عند طلب الحافلة، يمكنك حفظ موقعك كمفضل</span>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section">
+            <div class="section-header">
+                <h2>تواصل معنا</h2>
+            </div>
+            <div class="contact-cards">
+                <a href="tel:16000" class="contact-card" id="hotlineCard">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                        </svg>
+                    </div>
+                    <h3>اتصل بنا</h3>
+                    <p id="hotlineDisplay">16000</p>
+                    <span>متاح 24/7</span>
+                </a>
+                <a href="https://wa.me/201001234567" class="contact-card" id="whatsappCard" target="_blank">
+                    <div class="contact-icon whatsapp">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                    </div>
+                    <h3>واتساب</h3>
+                    <p id="whatsappDisplay">+20 100 123 4567</p>
+                    <span>رد سريع</span>
+                </a>
+                <a href="mailto:support@netba2.com" class="contact-card" id="emailCard">
+                    <div class="contact-icon email">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <path d="M22 6l-10 7L2 6"/>
+                        </svg>
+                    </div>
+                    <h3>البريد الإلكتروني</h3>
+                    <p id="emailDisplay">support@netba2.com</p>
+                    <span>نرد خلال 24 ساعة</span>
+                </a>
+            </div>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="contactName">الاسم</label>
+                    <input type="text" id="contactName" required placeholder="أدخل اسمك">
+                </div>
+                <div class="form-group">
+                    <label for="contactPhone">رقم الهاتف</label>
+                    <input type="tel" id="contactPhone" required placeholder="01xxxxxxxxx">
+                </div>
+                <div class="form-group full-width">
+                    <label for="contactMessage">رسالتك</label>
+                    <textarea id="contactMessage" rows="4" placeholder="اكتب رسالتك هنا..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="whatsapp-btn" id="sendWhatsApp">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                        إرسال عبر واتساب
+                    </button>
+                    <button type="submit" class="submit-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                        إرسال
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Request Modal -->
+    <div class="modal" id="requestModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>طلب الحافلة</h3>
+                <button class="modal-close" id="closeRequestModal" aria-label="إغلاق">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="requestForm">
+                <div class="form-group">
+                    <label for="pickupLocation">موقع الاستلام</label>
+                    <div class="input-group">
+                        <div class="input-with-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <input type="text" id="pickupLocation" placeholder="يتم تحديده تلقائياً من GPS" required>
+                        </div>
+                        <div class="input-actions">
+                            <button type="button" class="icon-btn success" id="refreshLocationBtn" title="تحديث الموقع">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 4v6h-6M1 20v-6h6"/>
+                                    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                                </svg>
+                            </button>
+                            <button type="button" class="icon-btn" id="saveLocationBtn" title="حفظ كمفضل">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <small class="location-hint" id="currentAddress">جاري تحديد الموقع...</small>
+                </div>
+                <div class="form-group">
+                    <label for="destinationLocation">الوجهة</label>
+                    <div class="input-with-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        <input type="text" id="destinationLocation" placeholder="أدخل الوجهة" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="disabilityType">نوع الإعاقة</label>
+                        <select id="disabilityType" required>
+                            <option value="">اختر</option>
+                            <option value="motor">حركية</option>
+                            <option value="visual">بصرية</option>
+                            <option value="hearing">سمعية</option>
+                            <option value="intellectual">ذهنية</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assistiveDevice">مساعدة خاصة</label>
+                        <select id="assistiveDevice">
+                            <option value="">اختر (اختياري)</option>
+                            <option value="wheelchair">كرسي متحرك</option>
+                            <option value="walker">مشاية</option>
+                            <option value="guide">مرافق</option>
+                            <option value="none">لا</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tripTime">وقت الرحلة</label>
+                        <input type="time" id="tripTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passengers">المرافقين</label>
+                        <input type="number" id="passengers" min="0" max="5" value="0">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelRequest">إلغاء</button>
+                    <button type="submit" class="confirm-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <path d="M22 4L12 14.01l-3-3"/>
+                        </svg>
+                        تأكيد الطلب
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Trip Modal -->
+    <div class="modal" id="tripModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة رحلة مجدولة</h3>
+                <button class="modal-close" id="closeTripModal" aria-label="إغلاق">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="tripForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tripDate">التاريخ</label>
+                        <input type="date" id="tripDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tripTimeScheduled">الوقت</label>
+                        <input type="time" id="tripTimeScheduled" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tripFrom">من</label>
+                    <input type="text" id="tripFrom" placeholder="نقطة الانطلاق" required>
+                </div>
+                <div class="form-group">
+                    <label for="tripTo">إلى</label>
+                    <input type="text" id="tripTo" placeholder="الوجهة" required>
+                </div>
+                <div class="form-group">
+                    <label for="tripNotes">ملاحظات</label>
+                    <textarea id="tripNotes" rows="2" placeholder="أي ملاحظات..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelTrip">إلغاء</button>
+                    <button type="submit" class="confirm-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        إضافة الرحلة
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SOS Modal -->
+    <div class="modal" id="sosModal">
+        <div class="modal-content sos-content">
+            <div class="sos-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                </svg>
+            </div>
+            <h3>نداء استغاثة</h3>
+            <p>سيتم إخطار مركز التحكم والسائق بموقعك الحالي</p>
+            <div class="sos-location" id="sosLocation">جاري تحديد الموقع...</div>
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="closeSosModal()">إلغاء</button>
+                <button type="button" class="sos-confirm-btn" onclick="confirmSOS()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07"/>
+                    </svg>
+                    إرسال الآن
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <svg class="footer-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 6v6M16 6v6M2 12h20M6 18h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2zM6 18v2M18 18v2"/>
+                </svg>
+                <span>نَتْبَع</span>
+            </div>
+            <p class="footer-text">نقل آمن ومريح لذوي الاحتياجات الخاصة</p>
+            <div class="footer-links">
+                <a href="admin.html">لوحة التحكم</a>
+                <span>•</span>
+                <a href="#">سياسة الخصوصية</a>
+                <span>•</span>
+                <a href="#">الشروط والأحكام</a>
+            </div>
+            <p class="footer-copy">© 2026 نَتْبَع - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

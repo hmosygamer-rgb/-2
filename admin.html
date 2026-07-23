@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - نَتْبَع</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+</head>
+<body class="admin-body">
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-header">
+                <svg class="login-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 6v6M16 6v6M2 12h20M6 18h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <h1>لوحة التحكم</h1>
+                <p>نَتْبَع - إدارة الحافلات</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="adminPassword">كلمة المرور</label>
+                    <div class="password-input">
+                        <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
+                    </svg>
+                    دخول
+                </button>
+                <p class="login-hint">كلمة المرور الافتراضية: <code>admin123</code></p>
+            </form>
+            <a href="index.html" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                العودة للتطبيق
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-dashboard" id="adminDashboard" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <div class="admin-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 6v6M16 6v6M2 12h20M6 18h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <span>لوحة التحكم</span>
+                </div>
+                <div class="admin-actions">
+                    <a href="index.html" class="view-site-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                            <polyline points="15 3 21 3 21 9"/>
+                            <line x1="10" y1="14" x2="21" y2="3"/>
+                        </svg>
+                        عرض الموقع
+                    </a>
+                    <button class="logout-btn" onclick="logout()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        خروج
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Stats Cards -->
+            <div class="admin-stats">
+                <div class="admin-stat-card">
+                    <div class="stat-icon blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="totalUsers">0</span>
+                        <span class="stat-label">إجمالي المستخدمين</span>
+                    </div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-icon green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 6v6M16 6v6M2 12h20M6 18h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="totalBuses">1</span>
+                        <span class="stat-label">عدد الحافلات</span>
+                    </div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-icon orange">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/>
+                            <path d="M16 2v4M8 2v4M3 10h18"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="totalTrips">0</span>
+                        <span class="stat-label">الرحلات المجدولة</span>
+                    </div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="stat-icon red">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72"/>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="totalSOS">0</span>
+                        <span class="stat-label">نداءات الاستغاثة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="contact">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <path d="M22 6l-10 7L2 6"/>
+                    </svg>
+                    بيانات التواصل
+                </button>
+                <button class="tab-btn" data-tab="buses">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 6v6M16 6v6M2 12h20M6 18h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    إدارة الحافلات
+                </button>
+                <button class="tab-btn" data-tab="requests">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                    </svg>
+                    سجل الطلبات
+                </button>
+                <button class="tab-btn" data-tab="settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                    </svg>
+                    الإعدادات
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Contact Info Tab -->
+                <div class="tab-panel active" id="contact">
+                    <div class="panel-header">
+                        <h2>بيانات التواصل</h2>
+                        <p>هذه البيانات تظهر في صفحة تواصل معنا</p>
+                    </div>
+                    <form id="contactForm" class="admin-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="hotline">رقم الخط الساخن</label>
+                                <div class="input-with-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72"/>
+                                    </svg>
+                                    <input type="text" id="hotline" placeholder="16000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="whatsapp">رقم الواتساب</label>
+                                <div class="input-with-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                    </svg>
+                                    <input type="text" id="whatsapp" placeholder="+20 100 123 4567">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">البريد الإلكتروني</label>
+                                <div class="input-with-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                        <path d="M22 6l-10 7L2 6"/>
+                                    </svg>
+                                    <input type="email" id="email" placeholder="support@netba2.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">العنوان</label>
+                                <div class="input-with-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    <input type="text" id="address" placeholder="القاهرة، مصر">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                                    <polyline points="17 21 17 13 7 13 7 21"/>
+                                    <polyline points="7 3 7 8 15 8"/>
+                                </svg>
+                                حفظ التغييرات
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Buses Tab -->
+                <div class="tab-panel" id="buses">
+                    <div class="panel-header">
+                        <h2>إدارة الحافلات</h2>
+                        <p>إضافة وتعديل بيانات الحافلات والسائقين</p>
+                    </div>
+                    
+                    <div class="buses-list" id="busesList">
+                        <!-- Bus cards will be rendered here -->
+                    </div>
+
+                    <button class="add-bus-btn" onclick="showAddBusModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        إضافة حافلة جديدة
+                    </button>
+                </div>
+
+                <!-- Requests Tab -->
+                <div class="tab-panel" id="requests">
+                    <div class="panel-header">
+                        <h2>سجل الطلبات</h2>
+                        <p>جميع طلبات الحافلات المرسلة</p>
+                    </div>
+                    <div class="requests-filters">
+                        <button class="filter-btn active" data-filter="all">الكل</button>
+                        <button class="filter-btn" data-filter="pending">قيد الانتظار</button>
+                        <button class="filter-btn" data-filter="completed">مكتملة</button>
+                        <button class="filter-btn" data-filter="cancelled">ملغية</button>
+                    </div>
+                    <div class="requests-list" id="requestsList">
+                        <!-- Requests will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-panel" id="settings">
+                    <div class="panel-header">
+                        <h2>الإعدادات</h2>
+                        <p>تغيير كلمة المرور وإعدادات النظام</p>
+                    </div>
+                    
+                    <form id="passwordForm" class="admin-form">
+                        <h3>تغيير كلمة المرور</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="currentPassword">كلمة المرور الحالية</label>
+                                <input type="password" id="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">كلمة المرور الجديدة</label>
+                                <input type="password" id="newPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">تأكيد كلمة المرور</label>
+                                <input type="password" id="confirmPassword" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="save-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0110 0v4"/>
+                            </svg>
+                            تحديث كلمة المرور
+                        </button>
+                    </form>
+
+                    <form id="systemSettings" class="admin-form" style="margin-top: 24px;">
+                        <h3>إعدادات النظام</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="defaultPassword">كلمة مرورAdmin الافتراضية</label>
+                                <input type="text" id="defaultPassword" placeholder="admin123">
+                                <small>يمكن تغييرها لاحقاً</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyName">اسم الشركة</label>
+                                <input type="text" id="companyName" value="نَتْبَع">
+                            </div>
+                        </div>
+                        <button type="submit" class="save-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                            حفظ الإعدادات
+                        </button>
+                    </form>
+
+                    <div class="danger-zone">
+                        <h3>⚠️ منطقة الخطر</h3>
+                        <p>هذه الإجراءات لا يمكن التراجع عنها</p>
+                        <div class="danger-actions">
+                            <button class="danger-btn" onclick="resetAllData()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                </svg>
+                                مسح جميع البيانات
+                            </button>
+                            <button class="danger-btn" onclick="exportData()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                                </svg>
+                                تصدير البيانات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Bus Modal -->
+    <div class="modal" id="busModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="busModalTitle">إضافة حافلة جديدة</h3>
+                <button class="modal-close" onclick="closeBusModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="busForm">
+                <input type="hidden" id="busId">
+                <div class="form-group">
+                    <label for="busNumber">رقم الحافلة</label>
+                    <input type="text" id="busNumber" required placeholder="مثال: 127">
+                </div>
+                <div class="form-group">
+                    <label for="busDriver">اسم السائق</label>
+                    <input type="text" id="busDriver" required placeholder="مثال: أحمد محمد">
+                </div>
+                <div class="form-group">
+                    <label for="driverPhone">هاتف السائق</label>
+                    <input type="tel" id="driverPhone" placeholder="مثال: 01012345678">
+                </div>
+                <div class="form-group">
+                    <label for="busSeats">عدد المقاعد</label>
+                    <input type="number" id="busSeats" value="12" min="1" max="50">
+                </div>
+                <div class="form-group">
+                    <label for="busStatus">الحالة</label>
+                    <select id="busStatus">
+                        <option value="available">متاحة</option>
+                        <option value="onway">في الطريق</option>
+                        <option value="busy">مشغولة</option>
+                        <option value="maintenance">صيانة</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeBusModal()">إلغاء</button>
+                    <button type="submit" class="confirm-btn">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
