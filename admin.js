@@ -8,7 +8,7 @@ const defaultSettings = {
     companyName: 'نَتْبَع',
     contact: {
         hotline: '16000',
-        whatsapp: '+20 100 123 4567',
+        whatsapp: '201001234567',
         email: 'support@netba2.com',
         address: 'القاهرة، مصر'
     }
@@ -75,6 +75,24 @@ function showDashboard() {
     loadBuses();
     loadStats();
     loadRequests();
+    loadContactMessages();
+    
+    // تحديث الإحصائيات
+    updateStats();
+}
+
+// تحديث الإحصائيات
+function updateStats() {
+    const buses = getBuses();
+    const trips = JSON.parse(localStorage.getItem('netba2_trips') || '[]');
+    const history = JSON.parse(localStorage.getItem('netba2_history') || '[]');
+    const sos = JSON.parse(localStorage.getItem('netba2_sos') || '[]');
+    const messages = JSON.parse(localStorage.getItem('netba2_contact_messages') || '[]');
+    
+    document.getElementById('totalUsers').textContent = history.length + 5;
+    document.getElementById('totalBuses').textContent = buses.length;
+    document.getElementById('totalTrips').textContent = trips.length;
+    document.getElementById('totalSOS').textContent = sos.length + messages.length;
 }
 
 // ===================================
@@ -130,6 +148,7 @@ document.querySelectorAll('.subtab-btn').forEach(btn => {
             messagesList.style.display = 'block';
             filters.style.display = 'none';
             loadContactMessages();
+            updateStats(); // تحديث الإحصائيات
         }
     });
 });
@@ -158,10 +177,10 @@ document.getElementById('contactForm')?.addEventListener('submit', (e) => {
     
     saveSettings(settings);
     
-    // تحديث التطبيق أيضاً
+    // حفظ في مفتاح منفصل للتطبيق الرئيسي
     localStorage.setItem('netba2_contact', JSON.stringify(settings.contact));
     
-    showToast('success', 'تم حفظ بيانات التواصل');
+    showToast('success', '✅ تم حفظ بيانات التواصل وتحديث الموقع بنجاح!');
 });
 
 // ===================================
@@ -306,7 +325,7 @@ document.getElementById('busForm')?.addEventListener('submit', (e) => {
     
     saveBuses(buses);
     loadBuses();
-    loadStats();
+    updateStats();
     closeBusModal();
     showToast('success', busId ? 'تم تحديث الحافلة' : 'تم إضافة الحافلة');
 });
@@ -317,7 +336,7 @@ function deleteBus(id) {
         buses = buses.filter(b => b.id !== id);
         saveBuses(buses);
         loadBuses();
-        loadStats();
+        updateStats();
         showToast('success', 'تم حذف الحافلة');
     }
 }
@@ -504,6 +523,7 @@ function resetAllData() {
             localStorage.removeItem('netba2_sos');
             localStorage.removeItem('netba2_favorites');
             localStorage.removeItem('netba2_buses');
+            localStorage.removeItem('netba2_contact_messages');
             
             // إعادة الحافلة الافتراضية
             saveBuses([{
@@ -516,8 +536,9 @@ function resetAllData() {
             }]);
             
             loadBuses();
-            loadStats();
+            updateStats();
             loadRequests();
+            loadContactMessages();
             
             showToast('success', 'تم مسح جميع البيانات');
         }
@@ -534,6 +555,7 @@ function exportData() {
         history: JSON.parse(localStorage.getItem('netba2_history') || '[]'),
         sos: JSON.parse(localStorage.getItem('netba2_sos') || '[]'),
         contact: loadSettings().contact,
+        contactMessages: JSON.parse(localStorage.getItem('netba2_contact_messages') || '[]'),
         exportDate: new Date().toISOString()
     };
     
@@ -545,7 +567,7 @@ function exportData() {
     a.click();
     URL.revokeObjectURL(url);
     
-    showToast('success', 'تم تصدير البيانات');
+    showToast('success', 'تم تصدير البيانات بنجاح');
 }
 
 // ===================================
